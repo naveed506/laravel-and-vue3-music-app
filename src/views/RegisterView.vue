@@ -13,7 +13,7 @@
               placeholder="Jon"
               v-model:input="firstName"
               inputType="text"
-              :error="errors.firstName ? errors.firstName[0] : ''"
+              :error="errors.first_name ? errors.first_name[0] : ''"
             />
 
             <TextInput
@@ -22,7 +22,7 @@
               placeholder="Doe"
               v-model:input="lastName"
               inputType="text"
-              :error="errors.lastName ? errors.lastName[0] : ''"
+              :error="errors.last_name ? errors.last_name[0] : ''"
             />
             <TextInput
               label="Email "
@@ -60,6 +60,7 @@
                 tracking-wide
               "
               type="submit"
+              @click="register"
             >
               Register
             </button>
@@ -79,13 +80,33 @@
 </template>
 <script setup>
 import TextInput from "../components/global/TextInput.vue";
+import { useUserStore } from "../../src/store/user-store";
+import axios from "axios";
 import { ref } from "vue";
+const userStore = useUserStore();
 let errors = ref([]);
 let firstName = ref(null);
 let lastName = ref(null);
 let email = ref(null);
 let password = ref(null);
 let confirmPassword = ref(null);
+
+const register = async () => {
+  errors.value = [];
+  try {
+    const reg = await axios.post("http://127.0.0.1:8000/api/register", {
+      email: email.value,
+      first_name: firstName.value,
+      last_name: lastName.value,
+      password: password.value,
+      password_confirmation: confirmPassword.value,
+    });
+    userStore.setUserDetails(reg);
+  } catch (error) {
+    console.log(error.response.data.errors);
+    errors.value = error.response.data.errors;
+  }
+};
 </script>
 <style lang="scss">
 </style>

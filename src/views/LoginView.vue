@@ -23,7 +23,7 @@
               inputType="password"
               :error="errors.password ? errors.password[0] : ''"
             />
-            <span class="text-red-500">This is an error message </span>
+
             <button
               class="
                 block
@@ -36,8 +36,9 @@
                 tracking-wide
               "
               type="submit"
+              @click="login"
             >
-              Register
+              Login
             </button>
           </div>
         </div>
@@ -55,10 +56,26 @@
 </template>
 <script setup>
 import TextInput from "../components/global/TextInput.vue";
+import { useUserStore } from "../../src/store/user-store";
 import { ref } from "vue";
+import axios from "axios";
+const userStore = useUserStore();
 let errors = ref([]);
 let email = ref(null);
 let password = ref(null);
+
+const login = async () => {
+  errors.value = [];
+  try {
+    let res = await axios.post("http://127.0.0.1:8000/api/login", {
+      email: email.value,
+      password: password.value,
+    });
+    userStore.setUserDetails(res);
+  } catch (error) {
+    errors.value = error.response.data.errors;
+  }
+};
 </script>
 <style lang="scss">
 </style>
