@@ -73,3 +73,6 @@
     </div>
   </div>
 </template>
+<script setup>
+import RouterLinkButton from "@/components/global/RouterLinkButton.vue";
+</script>
