@@ -4,12 +4,12 @@
       <b>About me</b>
     </p>
     <p class="text-md md:text-lg text-gray-600 leading-normal">
-      Lorem ipsum was conceived as filler text, formatted in a certain way to
-      enable the presentation of graphic elements in documents, without the need
-      for formal copy. Using Lorem Ipsum allows designers
+      {{ userStore.description }}
     </p>
   </div>
 </template>
 
 <script setup>
+import { useUserStore } from "@/store/user-store";
+const userStore = useUserStore();
 </script>

@@ -94,7 +94,7 @@ let confirmPassword = ref(null);
 const register = async () => {
   errors.value = [];
   try {
-    const reg = await axios.post("http://127.0.0.1:8000/api/register", {
+    const reg = await axios.post("api/register", {
       email: email.value,
       first_name: firstName.value,
       last_name: lastName.value,
