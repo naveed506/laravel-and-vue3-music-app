@@ -21,15 +21,22 @@ export const useUserStore = defineStore('user', {
             this.$state.email = res.data.user.email
             this.$state.location = res.data.user.location
             this.$state.description = res.data.user.description
+            this.$state.image = res.data.user.image
         },
         async fetchUser() {
-            let res = await axios.get('http://127.0.0.1:8000/api/users/' + this.$state.id)
+            let res = await axios.get('api/users/' + this.$state.id)
 
             this.$state.id = res.data.user.id
             this.$state.firstName = res.data.user.first_name
             this.$state.lastName = res.data.user.last_name
             this.$state.location = res.data.user.location
             this.$state.description = res.data.user.description
+            if (res.data.user.image) {
+                this.$state.image = process.env.VUE_APP_API_URL + 'images/users/' + res.data.user.image
+            } else {
+                this.$state.image = process.env.VUE_APP_URL + 'UserAvatar.png'
+            }
+
 
         },
         clearUser() {
@@ -40,6 +47,7 @@ export const useUserStore = defineStore('user', {
             this.$state.email = null
             this.$state.location = null
             this.$state.description = null
+            this.$state.image = null
         }
     },
     persist: true

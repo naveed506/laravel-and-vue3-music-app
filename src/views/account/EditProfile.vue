@@ -104,7 +104,7 @@ let firstName = ref(null);
 let lastName = ref(null);
 let location = ref(null);
 let description = ref(null);
-// let imageData = null;
+let imageData = null;
 let image = ref(null);
 let errors = ref([]);
 const router = useRouter();
@@ -118,6 +118,10 @@ onMounted(() => {
   image.value = userStore.image || null;
 });
 
+const setCroppedImageData = (data) => {
+  imageData = data;
+  image.value = data.imageUrl;
+};
 const updateUser = async () => {
   errors.value = [];
   let data = new FormData();
@@ -125,6 +129,15 @@ const updateUser = async () => {
   data.append("last_name", lastName.value || null);
   data.append("location", location.value || null);
   data.append("description", description.value || null);
+
+  if (imageData) {
+    data.append("image", imageData.file || "");
+    data.append("height", imageData.height || "");
+    data.append("width", imageData.width || "");
+    data.append("left", imageData.left || "");
+    data.append("top", imageData.top || "");
+  }
+
   try {
     await axios.post("api/users/" + userStore.id + "?_method=PUT", data);
 
@@ -133,11 +146,6 @@ const updateUser = async () => {
   } catch (error) {
     errors.value = error.response.data.errors;
   }
-};
-
-const setCroppedImageData = (data) => {
-  // imageData = data;
-  image.value = data.imageUrl;
 };
 </script>
 
