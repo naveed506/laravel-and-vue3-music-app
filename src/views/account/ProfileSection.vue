@@ -3,7 +3,7 @@
     <div class="w-1/3">
       <img
         class="w-full rounded-lg h-auto shadow-lg"
-        :src="userStore.image"
+        :src="profileStore.image"
         alt="profile-pic"
       />
     </div>
@@ -11,16 +11,17 @@
       <div class="flex">
         <div class="w-1/2">
           <h1 class="text-2xl md:text-4xl test-left text-gray-900">
-            {{ userStore.firstName }}
+            {{ profileStore.firstName }} {{ profileStore.lastName }}
           </h1>
           <span class="text-md text-gray-700">
             <i
-              ><b>{{ userStore.location }}</b></i
+              ><b>{{ profileStore.location }}</b></i
             >
           </span>
         </div>
         <div class="w-1/2 mt-2">
           <RouterLinkButton
+            v-if="userStore.id == route.params.id"
             btnText="Edit Profile"
             color="green"
             url="/account/edit-profile"
@@ -43,8 +44,17 @@ import SongsSection from "@/components/partials/profile/SongsSection.vue";
 import YoutubeVideosSection from "@/components/partials/profile/YoutubeVideosSection.vue";
 import PostSection from "@/components/partials/profile/PostSection.vue";
 import { useUserStore } from "@/store/user-store";
+import { useProfileStore } from "@/store/profile-store";
+import { onMounted } from "@vue/runtime-core";
+import { useRoute } from "vue-router";
 
 const userStore = useUserStore();
+const profileStore = useProfileStore();
+const route = useRoute();
+
+onMounted(async () => {
+  await profileStore.fetchProfileById(route.params.id);
+});
 </script>
 <style lang="scss">
 </style>

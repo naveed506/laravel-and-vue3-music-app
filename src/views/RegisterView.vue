@@ -80,10 +80,21 @@
 </template>
 <script setup>
 import TextInput from "../components/global/TextInput.vue";
+import { usePostStore } from "../../src/store/post-store";
+import { useProfileStore } from "../../src/store/profile-store";
+import { useSongStore } from "../../src/store/song-store";
 import { useUserStore } from "../../src/store/user-store";
+import { useVideoStore } from "../../src/store/video-store";
+import { useRouter } from "vue-router";
 import axios from "axios";
 import { ref } from "vue";
+const postStore = usePostStore();
+const profileStore = useProfileStore();
+const songStore = useSongStore();
 const userStore = useUserStore();
+const videoStore = useVideoStore();
+
+const router = useRouter();
 let errors = ref([]);
 let firstName = ref(null);
 let lastName = ref(null);
@@ -101,7 +112,13 @@ const register = async () => {
       password: password.value,
       password_confirmation: confirmPassword.value,
     });
+    axios.defaults.headers.common["Authorization"] = "Bearer " + reg.data.token;
     userStore.setUserDetails(reg);
+    await profileStore.fetchProfileById(userStore.id);
+    await songStore.fetchSongsByUserId(userStore.id);
+    await postStore.fetchPostsByUserId(userStore.id);
+    await videoStore.fetchVideosByUserId(userStore.id);
+    router.push("/account/profile/" + userStore.id);
   } catch (error) {
     console.log(error.response.data.errors);
     errors.value = error.response.data.errors;

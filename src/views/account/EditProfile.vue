@@ -142,7 +142,7 @@ const updateUser = async () => {
     await axios.post("api/users/" + userStore.id + "?_method=PUT", data);
 
     await userStore.fetchUser();
-    console.log(router.push("/account/profile/"));
+    router.push("/account/profile/" + userStore.id);
   } catch (error) {
     errors.value = error.response.data.errors;
   }

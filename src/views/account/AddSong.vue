@@ -62,10 +62,14 @@ import TextInput from "../../components/global/TextInput.vue";
 import SubmitFormButton from "@/components/global/SubmitFormButton.vue";
 import Swal from "../../sweetalert2.js";
 import { useUserStore } from "@/store/user-store";
+import { useSongStore } from "@/store/song-store";
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
+const songStore = useSongStore();
+const router = useRouter();
 let title = ref(null);
 let song = ref(null);
 let file = ref(null);
@@ -91,6 +95,10 @@ const addSong = async () => {
     form.append("file", song.value);
 
     await axios.post("api/songs", form);
+    songStore.fetchSongsByUserId(userStore.id);
+    setTimeout(() => {
+      router.push("/account/profile" + userStore.id);
+    }, 2000);
   } catch (error) {
     errors.value = error.response.data.errors;
   }
