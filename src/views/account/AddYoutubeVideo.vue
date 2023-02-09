@@ -9,7 +9,7 @@
       placeholder="Cool New Video"
       v-model:input="title"
       inputType="text"
-      error=""
+      :error="errors.title ? errors.title[0] : ''"
     />
 
     <TextInput
@@ -18,7 +18,7 @@
       placeholder="2VnYXKwneUQ"
       v-model:input="videoCode"
       inputType="text"
-      error=""
+      :error="errors.url ? errors.url[0] : ''"
     />
 
     <SubmitFormButton btnText="Add Video" @submit="addYoutubeVideoLink" />
@@ -28,4 +28,36 @@
 <script setup>
 import TextInput from "../../components/global/TextInput.vue";
 import SubmitFormButton from "../../components/global/SubmitFormButton.vue";
+import { ref } from "vue";
+import axios from "axios";
+import Swal from "@/sweetalert2";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/user-store";
+
+const router = useRouter();
+const userStore = useUserStore();
+
+let title = ref(null);
+let videoCode = ref(null);
+let errors = ref([]);
+
+const addYoutubeVideoLink = async () => {
+  errors.value = [];
+  try {
+    await axios.post("api/youtube", {
+      user_id: userStore.id,
+      title: title.value,
+      url: videoCode.value,
+    });
+    Swal.fire(
+      "New video added!",
+      'You added a video with the name "' + title.value + '"',
+      "success"
+    );
+    router.push("/account/profile/" + userStore.id);
+  } catch (err) {
+    errors.value = err.response.data.errors;
+    console.log("err addYoutubeVideoLink", err);
+  }
+};
 </script>
